@@ -1,0 +1,26 @@
+ replace与replaceAll的区别
+标签： Java正则表达式replacereplaceAll
+2013-05-28 17:15 34858人阅读 评论(3) 收藏 举报
+ 分类： java（91）  
+版权声明：本文为博主原创文章，未经博主允许不得转载。
+这两者有些人很容易搞混，因此我在这里详细讲述下。
+replace的参数是char和CharSequence，即可以支持字符的替换，也支持字符串的替换（CharSequence即字符串序列的意思,说白了也就是字符串）；
+replaceAll的参数是regex，即基于规则表达式的替换，比如：可以通过replaceAll("\\d", "*")把一个字符串所有的数字字符都换成星号；
+相同点：都是全部替换，即把源字符串中的某一字符或字符串全部换成指定的字符或字符串；
+不同点：replaceAll支持正则表达式，因此会对参数进行解析（两个参数均是），如replaceAll("\\d", "*")，而replace则不会，replace("\\d","*")就是替换"\\d"的字符串，而不会解析为正则。
+另外还有一个不同点：“\”在Java中是一个转义字符，所以需要用两个代表一个。例如System.out.println( "\\" ) ;只打印出一个"\"。但是“\”也是正则表达式中的转义字符，需要用两个代表一个。所以：\\\\被java转换成\\，\\又被正则表达式转换成\，因此用replaceAll替换“\”为"\\"，就要用replaceAll("\\\\","\\\\\\\\")，而replace则replace("\\","\\\\")。
+如果只想替换第一次出现的，可以使用replaceFirst()，这个方法也是基于规则表达式的替换，但与replaceAll()不同的是，只替换第一次出现的字符串。
+ 
+说到正则表达式，有个例子就能很好的解释replaceAll的用法。即替换空格
+[java] view plain copy
+String test = "wa n\tg_p\\te\\tn　g";  
+test = test.replaceAll("\\t|\\\\t|\u0020|\\u3000", "");//去掉空格  
+System.out.println(test);  
+其中
+[java] view plain copy
+test = test.replaceAll("\\t|\\\\t|\u0020|\\u3000", "")  
+与
+[java] view plain copy
+test = Pattern.compile("\\t|\\\\t|\u0020|\\u3000").matcher(test).replaceAll("")  
+是等效的，
+因此用正则表达式仅仅是替换全部或替换第一个的话，用replaceAll或replaceFirst即可。
